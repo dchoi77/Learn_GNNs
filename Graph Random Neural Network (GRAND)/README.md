@@ -17,3 +17,5 @@
 ![propagation](assets/propagation.png)
 
 - Prediction
+
+![prediction](assets/prediction.png)
