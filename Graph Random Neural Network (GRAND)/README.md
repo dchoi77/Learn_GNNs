@@ -11,3 +11,6 @@
 - DropNode
 
 ![dropnode](assets/dropnode.png)
+
+- Propagation: adopt the mixed-order propagation
+
