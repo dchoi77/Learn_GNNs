@@ -15,3 +15,4 @@
 - Propagation: adopt the mixed-order propagation
 
 ![propagation](assets/propagation.png)
+
