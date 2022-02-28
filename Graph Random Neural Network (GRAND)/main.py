@@ -12,3 +12,4 @@ def drop_node(feats, drop_rate, training):
 		masks = th.bernoulli(keep_rates).unsqueeze(1)	        # shape: (n, 1)
 		feats = masks.to(feats.device) * feats / keep_rate
 	return feats
+
