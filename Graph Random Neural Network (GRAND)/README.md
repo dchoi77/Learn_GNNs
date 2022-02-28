@@ -7,3 +7,6 @@
 - Illustration of GRAND in the paper
 
 ![illustration of GRAND](assets/papers_05.png)
+
+- DropNode
+-      Test
