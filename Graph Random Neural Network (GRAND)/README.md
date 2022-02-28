@@ -19,3 +19,7 @@
 - Prediction
 
 ![prediction](assets/prediction.png)
+
+- Loss 
+
+![loss](assets/loss.png)
