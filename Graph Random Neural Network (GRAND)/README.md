@@ -16,3 +16,4 @@
 
 ![propagation](assets/propagation.png)
 
+- Prediction
