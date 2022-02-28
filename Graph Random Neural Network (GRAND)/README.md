@@ -20,6 +20,8 @@
 
 ![prediction](assets/prediction.png)
 
+We use softmax at the final layer of MLP.
+
 - Loss 
 
 ![loss](assets/loss.png)
