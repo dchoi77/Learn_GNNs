@@ -9,4 +9,5 @@
 ![illustration of GRAND](assets/papers_05.png)
 
 - DropNode
-  - ![dropnode](assets/dropnode.png)
+
+![dropnode](assets/dropnode.png)
