@@ -20,7 +20,7 @@
 
 ![prediction](assets/prediction.png)
 
-We use softmax at the final layer of MLP.
+We can apply softmax (or log_softmax followed by exp) to the output of of the MLP layer so that we can compute loss assuming positive prediction.
 
 - Loss 
 
