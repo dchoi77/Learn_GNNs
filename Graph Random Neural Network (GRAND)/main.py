@@ -94,3 +94,50 @@ class GRAND(nn.Module):
 		else:
 			feat =  GRANDConv(graph, feats, self.K)
 			return th.log_softmax(self.mlp(feat), dim = -1)
+
+def consis_loss(log_ps_list, temp):	# log_ps: log probabilities
+	ps = [th.exp(p) for p in log_ps_list]
+	ps = th.stack(ps, dim=2)		# shape: (n_nodes, n_classes, S)
+	Z_bar = th.mean(ps, dim=2)
+	Z_bar_temp = th.pow(Z_bar, 1./temp)
+	Z_bar_prime = (Z_bar_temp / th.sum(Z_bar_temp, dim=1, keepdim=True)).detach().unsqueeze(2)	# shape: (n_nodes, n_classes, 1)
+	loss = th.mean(th.sum(th.pow(ps - Z_bar_prime, 2), dim=[0, 1]))
+	return loss
+
+
+def argument():
+	parser = argparse.ArgumentParser(description='GRAND')
+	
+	parser.add_argument('--dataname', type=str, default='cora', help='Name of dataset')
+	parser.add_argument('--gpu', type=int, default=-1, help='GPU index. Default: -1, using CPU')
+	parser.add_argument('--epochs', type=int, default=200, help='Training epochs')
+	parser.add_argument('--early_stopping', type=int, default=200, help='Patient epochs to wait before early stopping')
+	parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
+	parser.add_argument('--weight_decay', type=float, default=5e-4, help='L2 reg')
+	parser.add_argument('--hid_dim', type=int, default=32, help='Hidden layer dimension')
+	parser.add_argument('--dropnode_rate', type=float, default=0.5, help='Dropnode rate')
+	parser.add_argument('--input_droprate', type=float, default=0.0, help='dropout rate of input layer')
+	parser.add_argument('--hidden_droprate', type=float, default=0.0, help='dropout rate of hidden layer')
+	parser.add_argument('--order', type=int, default=8, help='Propagation step')
+	parser.add_argument('--sample', type=int, default=4, help='Sampling times of dropnode')
+	parser.add_argument('--tem', type=float, default=0.5, help='Sharpening temperature')
+	parser.add_argument('--lam', type=float, default=1., help='Coefficient of consistency regularization')
+	parser.add_argument('--user_bn', action='store_true', default=False, help='Using Batch Normalization')
+	
+	args = parser.parse_args()
+	
+	if args.gpu != -1 and th.cuda.is_available():
+		args.device = 'cuda:{}'.format(args.gpu)
+	else:
+		args.device = 'cpu'
+		
+	return args
+
+	
+if __name__ == '__main__':
+	args = argument()
+	print(args)
+	
+	
+
+	
