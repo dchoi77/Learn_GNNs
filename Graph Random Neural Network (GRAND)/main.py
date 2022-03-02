@@ -138,6 +138,94 @@ if __name__ == '__main__':
 	args = argument()
 	print(args)
 	
-	
+	if args.dataname == 'cora':
+		dataset = CoraGraphDataset()
+	elif args.dataname == 'citeseer':
+		dataset = CiteseerGraphDataset()
+	elif args.dataname == 'pubmed':
+		dataset = PubmedGraphDataset()
+		
+	graph = dataset[0]
+	graph = dgl.add_self_loop(graph)
 
+	device = args.device
+	n_classes = dataset.num_classes
+	labels = graph.ndata.pop('label').to(device).long()
 	
+	feats = graph.ndata.pop('feat').to(device)
+	n_features = feats.shape[-1]
+	
+	train_mask = graph.ndata.pop('train_mask')
+	val_mask = graph.ndata.pop('val_mask')
+	test_mask = graph.ndata.pop('test_mask')
+	
+	train_idx = th.nonzero(train_mask, as_tuple=False).squeeze().to(device)
+	val_idx = th.nonzero(val_mask, as_tuple=False).squeeze().to(device)
+	test_idx = th.nonzero(test_mask, as_tuple=False).squeeze().to(device)
+	
+	model = GRAND(n_features, args.hid_dim, n_classes, args.sample, args.order, args.dropnode_rate, args.input_droprate, args.hidden_droprate, args.use_bn)
+	model = model.to(device)
+	graph = graph.to(device)
+	
+	loss_fn = nn.NLLLoss()	# The input given through a forward call is expected to contain log-probabilities of each class.
+	opt = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+	
+	loss_best = np.inf
+	acc_best = 0
+	
+	for epoch in range(args.epochs):
+		model.train()
+		
+		logits = model(graph, feats, True)		# list of log_softmax outputs 
+		
+		# supervised loss 
+		# & acc_train
+		loss_sup = 0.
+		acc_train = 0.
+		for k in range(args.sample):
+			loss_sup += loss_fn(logits[k][train_idx], labels[train_idx])
+			acc_train += th.sum(logits[k][train_idx].argmax(dim=1) == labels[train_idx]).item() / len(train_idx)
+		loss_sup = loss_sup / args.sample
+		acc_train = acc_train / args.sample
+		
+		# consistency loss
+		loss_consis = consis_loss(logits, args.tem)
+		
+		# total loss
+		loss_train = loss_sup + args.lam * loss_consis
+	
+		opt.zero_grad()
+		loss_train.backward()
+		opt.step()
+		
+		model.eval()
+		with th.no_grad():
+			val_logits = model(graph, feats, False)
+			loss_val = loss_fn(val_logits[val_idx], labels[val_idx])
+			acc_val = th.sum(val_logits[val_idx].argmax(dim=1) == labels[val_idx]).item() / len(val_idx)
+			
+			print("In epoch {}, Train Acc: {:.4f} | Train Loss: {:.4f} ,Val Acc: {:.4f} | Val Loss: {:.4f}".
+              format(epoch, acc_train, loss_train.item(), acc_val, loss_val.item()))
+			
+			# early stopping
+			if loss_val < loss_best or acc_val > acc_best:
+				if loss_val < loss_best:
+					best_epoch = epoch
+					th.save(model.state_dict(), args.datename + '.pkl')
+				no_improvement = 0
+				loss_best = min(loss_val, loss_bst)
+				acc_best = max(acc_val, acc_best)
+			else:
+				no_improvement += 1
+				if no_improvement == args.early_stopping:
+					print('Early stopping.')
+					break
+					
+	print('Loading {}th epoch'.format(best_epoch))
+    model.load_state_dict(th.load(args.dataname +'.pkl'))
+	
+	model.eval()
+	
+	test_logits = model(graph, feats, False)
+	test_acc = th.sum(test_logits[test_idx].argmax(dim=1) == labels[test_idx]).item() / len(test_idx)
+	print("Test Acc: {:.4f}".format(test_acc))
