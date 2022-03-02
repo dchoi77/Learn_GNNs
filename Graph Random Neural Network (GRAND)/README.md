@@ -25,3 +25,5 @@ We can apply softmax (or log_softmax followed by exp) to the output of of the ML
 - Loss 
 
 ![loss](assets/loss.png)
+
+Note that <img src="https://latex.codecogs.com/png.latex?\overline{\mathbf{Z}}^{\prime}"> is detached from the computation graph in the code. Thus its gradient is not computed in the loss function.
