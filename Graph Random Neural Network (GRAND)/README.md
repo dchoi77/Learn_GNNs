@@ -26,4 +26,8 @@ We can apply softmax (or log_softmax followed by exp) to the output of of the ML
 
 ![loss](assets/loss.png)
 
-Note that <img src="https://latex.codecogs.com/png.latex?\overline{\mathbf{Z}}^{\prime}"> is detached from the computation graph in the code. Thus its gradient is not computed in the loss function.
+
+Note the following:
+
+* <img src="https://latex.codecogs.com/png.latex?\overline{\mathbf{Z}}^{\prime}"> is detached from the computation graph in the code. Thus its gradient is not computed in the loss function.
+* The original code computes training accuracy over one output <img src="https://latex.codecogs.com/png.latex?\overline{\mathbf{Z}}^{(1)}">, but we computes average accuracy over the list of outputs.
