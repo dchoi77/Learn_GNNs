@@ -4,3 +4,7 @@
 The mixup vicinal distribution can be understood as a form of data augmentation that encourages the model to behave linearly in-between training examples. 
 
 ![mixup](./artifacts/mixup_02.png)
+
+Note:
+
+![mixup](./artifacts/mixup_03.png)
