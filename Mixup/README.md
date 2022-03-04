@@ -3,8 +3,4 @@
 
 The mixup vicinal distribution can be understood as a form of data augmentation that encourages the model to behave linearly in-between training examples. 
 
-Sampling from the mixup vicinal distribution produces virtual feature-target vectors
-
 ![mixup](./artifacts/mixup_02.png)
-
-where 
