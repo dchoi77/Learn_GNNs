@@ -5,4 +5,6 @@ The mixup vicinal distribution can be understood as a form of data augmentation 
 
 Sampling from the mixup vicinal distribution produces virtual feature-target vectors
 
+![mixup](./artifacts/mixup_02.png)
 
+where 
