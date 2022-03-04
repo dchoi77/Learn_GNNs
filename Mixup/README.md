@@ -5,6 +5,6 @@ The mixup vicinal distribution can be understood as a form of data augmentation 
 
 ![mixup](./artifacts/mixup_02.png)
 
-Note:
+* Beta distribution:
 
 ![mixup](./artifacts/mixup_03.png)
