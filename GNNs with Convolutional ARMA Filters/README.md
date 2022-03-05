@@ -3,3 +3,6 @@
 
 * Summary of the paper:
 
+![arma](./artifacts/arma1.png)
+
+![arma](./artifacts/arma2.png)
