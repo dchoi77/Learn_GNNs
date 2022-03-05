@@ -5,6 +5,6 @@
 
 ![arma](./artifacts/arma_1.png)
 
-![arma](./artifacts/arma_2.png) 
+![arma](./artifacts/arma.png) 
 
 ![arma](./artifacts/papers_01.png)
