@@ -36,9 +36,9 @@ class GCNLayer(nn.Module):
     self.g.ndata['h'] = torch.mm(h, self.weight)
     self.g.update_all(gcn_msg, gcn_reduce)
     h = self.g.ndata['h']
-		if self.bias:
-			h = h + self.bias
-		if self.activation:
-			h = self.activation(h)
-    h = self.g.ndata.pop('h')
-		return h
+	if self.bias:
+		h = h + self.bias
+	if self.activation:
+		h = self.activation(h)
+	self.g.ndata['h'] = h
+    return self.g.ndata.pop('h')
