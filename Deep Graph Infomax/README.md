@@ -6,3 +6,6 @@
 
 * Overview of DGI
 
+![overview](./artifacts/dgi_2.png)
+
+![overview](./artifacts/dgi_1.png)
