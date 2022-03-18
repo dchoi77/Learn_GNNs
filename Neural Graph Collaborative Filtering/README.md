@@ -3,3 +3,4 @@
   * https://github.com/xiangwang1223/neural_graph_collaborative_filtering
   * https://github.com/dmlc/dgl/tree/master/examples/pytorch/NGCF
 
+![ngcf](./artifacts/ngcf_1.png)
