@@ -62,4 +62,27 @@ class NGCFLayer(nn.Module):
         
         
 class NGCF(nn.Module):
-  
+  def __init__(self, g, in_size, layer_size, dropout, lmbd=1e-5):
+    super(NGCF, self).__init__()
+    self.lmbd = lmbd
+    self.num_layers = len(layer_size)
+    
+    self.norm_dict = dict()
+    for canonical_etype in g.canonical_etypes:
+      srctype, etype, dsttype = canonical_etype
+      src, dst = g.edges(etype=canonical_etype)
+      dst_degree = g.in_degrees(dst, etype=canonical_etype).float()
+      src_degree = g.out_degrees(src, etype=canonical_etype).float()
+      norm = torch.pow(src_degree * dst_degree, -0.5).unsqueeze(1)
+      self.norm_dict[canonical_etype] = norm
+
+    self.layers = nn.ModuleList()
+    self.layers.append(NGCFLayer(in_size, layer_size[0], self.norm_dict, dropout[0]))
+    for i in range(self.num_layers - 1):
+      self.layers.append(NGCFLayer(layer_size[i], layer_size[i+1], self.norm_dict, dropout[i+1]))
+
+    self.feature_dict = nn.ParameterDict({
+      ntype: nn.Parameter(nn.init.xavier_uniform_(torch.empty(g.num_nodes(ntype), in_size))) 
+      for ntype in g.ntypes
+    })
+                      
